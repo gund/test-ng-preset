@@ -21,6 +21,8 @@ import { MY_PRESET_TOKEN, MyPreset } from './my-preset';
 })
 export class MyComponent implements OnInit, OnChanges {
 
+  private static globalPresetCompRef: ComponentRef<MyPreset> | undefined;
+
   @Input() headerTpl: TemplateRef<any>;
   @Input() contentTpl: TemplateRef<any>;
   @Input() footerTpl: TemplateRef<any>;
@@ -38,23 +40,22 @@ export class MyComponent implements OnInit, OnChanges {
   get overrideHeaderTpl() {
     return this.headerTpl || this.contentHeaderTpl ||
       this._getCompPropFrom(this._presetCompRef, 'headerTpl') ||
-      this._getCompPropFrom(this._globalPresetCompRef, 'headerTpl');
+      this._getCompPropFrom(MyComponent.globalPresetCompRef, 'headerTpl');
   }
 
   get overrideContentTpl() {
     return this.contentTpl || this.contentContentTpl ||
       this._getCompPropFrom(this._presetCompRef, 'contentTpl') ||
-      this._getCompPropFrom(this._globalPresetCompRef, 'contentTpl');
+      this._getCompPropFrom(MyComponent.globalPresetCompRef, 'contentTpl');
   }
 
   get overrideFooterTpl() {
     return this.footerTpl || this.contentFooterTpl ||
       this._getCompPropFrom(this._presetCompRef, 'footerTpl') ||
-      this._getCompPropFrom(this._globalPresetCompRef, 'footerTpl');
+      this._getCompPropFrom(MyComponent.globalPresetCompRef, 'footerTpl');
   }
 
   private _presetCompRef: ComponentRef<MyPreset> | undefined;
-  private _globalPresetCompRef: ComponentRef<MyPreset> | undefined;
 
   constructor(
     private compResolver: ComponentFactoryResolver,
@@ -62,8 +63,10 @@ export class MyComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit() {
-    this._globalPresetCompRef = this._createCompFromType(
-      this.injector.get(MY_PRESET_TOKEN, null));
+    if (!MyComponent.globalPresetCompRef) {
+      MyComponent.globalPresetCompRef = this._createCompFromType(
+        this.injector.get(MY_PRESET_TOKEN, null));
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {

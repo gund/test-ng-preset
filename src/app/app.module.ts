@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { MyPresetOneComponent } from './my-preset-one/my-preset-one.component';
 import { MyModule } from './my/my.module';
+import { MyCustomModule } from './my/my-custom.module';
 
 @NgModule({
   imports: [
