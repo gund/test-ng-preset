@@ -1,17 +1,20 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-
+import { MyPresetOneComponent } from './my-preset-one/my-preset-one.component';
+import { MyComponent } from './my/my.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MyComponent,
+    MyPresetOneComponent,
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
   ],
+  entryComponents: [MyPresetOneComponent],
   providers: [],
   bootstrap: [AppComponent]
 })
