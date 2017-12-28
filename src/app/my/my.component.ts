@@ -40,22 +40,27 @@ export class MyComponent implements OnInit, OnChanges {
   get overrideHeaderTpl() {
     return this.headerTpl || this.contentHeaderTpl ||
       this._getCompPropFrom(this._presetCompRef, 'headerTpl') ||
-      this._getCompPropFrom(MyComponent.globalPresetCompRef, 'headerTpl');
+      this._getCompPropFrom(this._globalPresetCompRef, 'headerTpl');
   }
 
   get overrideContentTpl() {
     return this.contentTpl || this.contentContentTpl ||
       this._getCompPropFrom(this._presetCompRef, 'contentTpl') ||
-      this._getCompPropFrom(MyComponent.globalPresetCompRef, 'contentTpl');
+      this._getCompPropFrom(this._globalPresetCompRef, 'contentTpl');
   }
 
   get overrideFooterTpl() {
     return this.footerTpl || this.contentFooterTpl ||
       this._getCompPropFrom(this._presetCompRef, 'footerTpl') ||
-      this._getCompPropFrom(MyComponent.globalPresetCompRef, 'footerTpl');
+      this._getCompPropFrom(this._globalPresetCompRef, 'footerTpl');
   }
 
   private _presetCompRef: ComponentRef<MyPreset> | undefined;
+  private _globalPresetToken = this.injector.get(MY_PRESET_TOKEN, null);
+
+  private get _globalPresetCompRef() {
+    return this._globalPresetToken && this._globalPresetToken.compRef;
+  }
 
   constructor(
     private compResolver: ComponentFactoryResolver,
@@ -63,9 +68,8 @@ export class MyComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit() {
-    if (!MyComponent.globalPresetCompRef) {
-      MyComponent.globalPresetCompRef = this._createCompFromType(
-        this.injector.get(MY_PRESET_TOKEN, null));
+    if (this._globalPresetToken && !this._globalPresetToken.compRef) {
+      this._globalPresetToken.compRef = this._createCompFromType(this._globalPresetToken);
     }
   }
 

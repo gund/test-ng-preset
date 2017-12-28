@@ -1,4 +1,4 @@
-import { InjectionToken, TemplateRef, Type } from '@angular/core';
+import { ComponentRef, InjectionToken, TemplateRef, Type } from '@angular/core';
 
 export interface MyPreset {
   headerTpl: TemplateRef<any>;
@@ -6,4 +6,8 @@ export interface MyPreset {
   footerTpl: TemplateRef<any>;
 }
 
-export const MY_PRESET_TOKEN = new InjectionToken<Type<MyPreset>>('MyPreset');
+export interface MyPresetToken extends Type<MyPreset> {
+  compRef?: ComponentRef<MyPreset>;
+}
+
+export const MY_PRESET_TOKEN = new InjectionToken<MyPresetToken>('MyPreset');
