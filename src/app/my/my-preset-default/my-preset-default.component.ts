@@ -1,6 +1,6 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 
-import { MyPreset } from '../my/my-preset';
+import { MyPreset } from '../my-preset';
 
 @Component({
   selector: 'app-my-preset-default',

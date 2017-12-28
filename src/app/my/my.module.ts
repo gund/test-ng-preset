@@ -1,24 +1,16 @@
-import { CommonModule } from '@angular/common';
-import { ANALYZE_FOR_ENTRY_COMPONENTS, forwardRef, ModuleWithProviders, NgModule, Type } from '@angular/core';
+import { forwardRef, NgModule } from '@angular/core';
 
-import { MY_PRESET_TOKEN, MyPreset } from './my-preset';
-import { MyComponent } from './my.component';
+import { MyPresetDefaultComponent } from './my-preset-default/my-preset-default.component';
+import { MyComponentModule } from './my-component.module';
+import { MY_PRESET_TOKEN } from './my-preset';
 
 @NgModule({
-  imports: [CommonModule],
-  exports: [MyComponent],
-  declarations: [MyComponent],
+  imports: [MyComponentModule],
+  exports: [MyComponentModule],
+  declarations: [MyPresetDefaultComponent],
+  entryComponents: [MyPresetDefaultComponent],
+  providers: [
+    { provide: MY_PRESET_TOKEN, useValue: forwardRef(() => MyPresetDefaultComponent) }
+  ],
 })
-export class MyModule {
-
-  static withPreset(presetComponent: Type<MyPreset>): ModuleWithProviders {
-    return {
-      ngModule: MyModule,
-      providers: [
-        { provide: ANALYZE_FOR_ENTRY_COMPONENTS, useValue: presetComponent, multi: true },
-        { provide: MY_PRESET_TOKEN, useValue: forwardRef(() => presetComponent) },
-      ],
-    };
-  }
-
-}
+export class MyModule { }
