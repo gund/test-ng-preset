@@ -6,19 +6,20 @@ import {
   Injector,
   Input,
   OnChanges,
+  OnInit,
   SimpleChanges,
   TemplateRef,
   Type,
 } from '@angular/core';
 
-import { MyPreset } from './my-preset';
+import { MY_PRESET_TOKEN, MyPreset } from './my-preset';
 
 @Component({
   selector: 'app-my',
   templateUrl: './my.component.html',
   styleUrls: ['./my.component.css']
 })
-export class MyComponent implements OnChanges {
+export class MyComponent implements OnInit, OnChanges {
 
   @Input() headerTpl: TemplateRef<any>;
   @Input() contentTpl: TemplateRef<any>;
@@ -36,25 +37,34 @@ export class MyComponent implements OnChanges {
 
   get overrideHeaderTpl() {
     return this.headerTpl || this.contentHeaderTpl ||
-      this._presetCompRef && this._presetCompRef.instance.headerTpl;
+      this._getCompPropFrom(this._presetCompRef, 'headerTpl') ||
+      this._getCompPropFrom(this._globalPresetCompRef, 'headerTpl');
   }
 
   get overrideContentTpl() {
     return this.contentTpl || this.contentContentTpl ||
-      this._presetCompRef && this._presetCompRef.instance.contentTpl;
+      this._getCompPropFrom(this._presetCompRef, 'contentTpl') ||
+      this._getCompPropFrom(this._globalPresetCompRef, 'contentTpl');
   }
 
   get overrideFooterTpl() {
     return this.footerTpl || this.contentFooterTpl ||
-      this._presetCompRef && this._presetCompRef.instance.footerTpl;
+      this._getCompPropFrom(this._presetCompRef, 'footerTpl') ||
+      this._getCompPropFrom(this._globalPresetCompRef, 'footerTpl');
   }
 
-  private _presetCompRef: ComponentRef<MyPreset> | null = null;
+  private _presetCompRef: ComponentRef<MyPreset> | undefined;
+  private _globalPresetCompRef: ComponentRef<MyPreset> | undefined;
 
   constructor(
     private compResolver: ComponentFactoryResolver,
     private injector: Injector,
   ) { }
+
+  ngOnInit() {
+    this._globalPresetCompRef = this._createCompFromType(
+      this.injector.get(MY_PRESET_TOKEN, null));
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.presetType) {
@@ -65,15 +75,22 @@ export class MyComponent implements OnChanges {
   private _resolvePresetComponent() {
     if (this._presetCompRef) {
       this._presetCompRef.destroy();
-      this._presetCompRef = null;
     }
 
-    if (!this.presetType) {
-      return;
-    }
+    this._presetCompRef = this._createCompFromType(this.presetType);
+  }
 
-    const presetFactory = this.compResolver.resolveComponentFactory(this.presetType);
-    this._presetCompRef = presetFactory.create(this.injector);
+  private _createCompFromType<T>(type?: Type<T>) {
+    return type && this.compResolver
+      .resolveComponentFactory(type)
+      .create(this.injector);
+  }
+
+  private _getCompPropFrom<T>(
+    ref?: ComponentRef<T>,
+    prop?: keyof T,
+  ) {
+    return ref && prop && ref.instance[prop];
   }
 
 }
