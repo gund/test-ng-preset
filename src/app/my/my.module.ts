@@ -1,8 +1,8 @@
 import { forwardRef, NgModule } from '@angular/core';
 
-import { MyPresetDefaultComponent } from './my-preset-default/my-preset-default.component';
 import { MyComponentModule } from './my-component.module';
 import { MY_PRESET_TOKEN } from './my-preset';
+import { MyPresetDefaultComponent } from './my-preset-default/my-preset-default.component';
 
 @NgModule({
   imports: [MyComponentModule],
